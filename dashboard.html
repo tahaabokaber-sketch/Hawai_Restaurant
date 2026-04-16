@@ -94,6 +94,65 @@
     </main>
 
     <script>
+
+    async function refreshUI() {
+        try {
+            // جلب البيانات من السيرفر (PHP) بدل الـ LocalStorage
+            const response = await fetch('get_orders.php');
+            const orders = await response.json();
+            
+            // جلب إحصائيات المنيو والليدجر من الـ LocalStorage (أو خليهم زي ما هم)
+            const products = JSON.parse(localStorage.getItem('hawai_products')) || [];
+            
+            // تحديث الإحصائيات بالأرقام الحقيقية من الداتا بيز
+            document.getElementById('stat-orders').innerText = orders.length;
+            document.getElementById('stat-items').innerText = products.length;
+
+            const grid = document.getElementById('orders-grid');
+            grid.innerHTML = orders.map((o, i) => {
+                // تحويل بيانات الوجبات من نص JSON إلى مصفوفة
+                const items = JSON.parse(o.order_items);
+                
+                return `
+                <div class="glass-panel p-6 rounded-[2rem] border-r-4 border-amber-500 space-y-4 shadow-xl">
+                    <div class="flex justify-between items-center opacity-40 text-[9px] font-black border-b border-white/5 pb-2">
+                        <span>#${o.id}</span> <span>${o.created_at}</span>
+                    </div>
+                    <h3 class="text-xl font-black text-white italic">${o.customer_name}</h3>
+                    <p class="text-xs font-bold text-amber-500 italic underline"><i class="fas fa-phone ml-1"></i> ${o.phone}</p>
+                    
+                    ${o.order_type === 'توصيل' ? `
+                        <div class="bg-blue-500/10 p-3 rounded-xl border border-blue-500/20 text-[10px]">
+                            <p class="text-blue-400 font-black mb-1 italic underline">العنوان:</p>
+                            <p class="text-white">${o.address}</p>
+                        </div>
+                    ` : ''}
+
+                    ${o.payment_info ? `
+                        <div class="bg-amber-500/10 p-3 rounded-xl border border-amber-500/20 text-[10px]">
+                            <p class="text-amber-500 font-black mb-1 italic underline">تأكيد المحفظة:</p>
+                            <p class="text-white font-mono break-all">${o.payment_info}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="bg-white/5 p-4 rounded-xl text-[11px] font-black">
+                        <p class="text-[9px] text-gray-500 mb-2 uppercase italic tracking-widest">الوجبات:</p>
+                        ${items.map(it => `<div class="flex justify-between"><span>${it.name}</span> <span class="text-amber-500">x${it.quantity}</span></div>`).join('')}
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded-xl flex justify-between items-center text-amber-500 font-black border border-white/5">
+                        <span class="text-xs text-gray-500">الإجمالي:</span>
+                        <span class="text-lg">${o.total_price} ج.م</span>
+                    </div>
+                    
+                    <button class="w-full bg-amber-500 text-dark py-4 rounded-xl font-black text-xs uppercase shadow-lg shadow-amber-500/10 transition hover:bg-white">تم التجهيز</button>
+                </div>
+            `}).join('');
+        } catch (e) {
+            console.error("Error loading orders:", e);
+        }
+    }
+
         let currentImg = "";
 
         function toggleSidebar() {
