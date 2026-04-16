@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منيو مطعم هواي | Hawai Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #e2e8f0; overflow-x: hidden; }
+        .glass-nav { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .product-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05); }
+        .product-card:hover { transform: translateY(-10px); border-color: #f59e0b; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); }
+        .category-btn.active { background: #f59e0b; color: #0f172a; box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4); }
+        .cart-badge { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body class="pb-20">
+
+    <nav class="glass-nav fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-black italic tracking-tighter text-white">هواي <span class="text-amber-500">MENU</span></h1>
+        
+        <div class="flex items-center gap-6">
+            <a href="index.html" class="text-sm font-bold text-gray-400 hover:text-white transition">الرئيسية</a>
+            <a href="cart.html" class="relative group">
+                <div class="bg-amber-500 p-3 rounded-2xl text-slate-900 shadow-lg group-hover:bg-white transition">
+                    <i class="fas fa-shopping-basket text-xl"></i>
+                </div>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-black w-6 h-6 flex items-center justify-center rounded-full border-2 border-[#0f172a] cart-badge">0</span>
+            </a>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-12 px-6 text-center">
+        <h2 class="text-4xl md:text-6xl font-black text-white mb-4">اختار وجبتك <span class="text-amber-500 underline decoration-wavy underline-offset-8">المفضلة</span></h2>
+        <p class="text-gray-400 max-w-2xl mx-auto font-bold italic">أفضل المكونات الطازجة، تُحضر خصيصاً لك بلمسة "هواي" السحرية.</p>
+    </header>
+
+    <div class="flex justify-center gap-3 px-6 mb-12 overflow-x-auto pb-4">
+        <button class="category-btn active px-8 py-3 rounded-2xl font-black text-sm transition-all">الكل</button>
+        <button class="category-btn px-8 py-3 rounded-2xl font-black text-sm text-gray-500 border border-white/5 transition-all">مشويات</button>
+        <button class="category-btn px-8 py-3 rounded-2xl font-black text-sm text-gray-500 border border-white/5 transition-all">بيتزا</button>
+        <button class="category-btn px-8 py-3 rounded-2xl font-black text-sm text-gray-500 border border-white/5 transition-all">مشروبات</button>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="menu-grid">
+        </main>
+
+    <div class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] glass-nav rounded-3xl p-4 flex justify-around items-center shadow-2xl border border-white/10">
+        <a href="index.html" class="text-gray-500"><i class="fas fa-home text-xl"></i></a>
+        <a href="menu.html" class="text-amber-500"><i class="fas fa-utensils text-xl"></i></a>
+        <a href="cart.html" class="text-gray-500"><i class="fas fa-shopping-cart text-xl"></i></a>
+    </div>
+
+    <script>
+        // 1. تحميل الوجبات من الـ Dashboard
+        function loadMenu() {
+            // جلب المنتجات اللي الأدمن ضافها، ولو مفيش بنحط وجبات تجريبية
+            const products = JSON.parse(localStorage.getItem('hawai_products')) || [
+                { id: 1, name: "برجر هواي الملكي", price: 120, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" },
+                { id: 2, name: "بيتزا إيطالي أصلي", price: 150, image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" }
+            ];
+
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = products.map(p => `
+                <div class="product-card p-4 rounded-[2.5rem] flex flex-col">
+                    <div class="relative overflow-hidden rounded-[2rem] mb-4">
+                        <img src="${p.image}" class="w-full h-52 object-cover transition duration-500 hover:scale-110">
+                        <div class="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md px-4 py-1 rounded-full border border-white/10">
+                            <span class="text-amber-500 font-black text-xs">${p.price} ج.م</span>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-black text-white px-2 mb-2">${p.name}</h3>
+                    <p class="text-xs text-gray-500 font-bold px-2 mb-6 italic italic">طعم لا يُنسى من مطبخنا الخاص</p>
+                    <button onclick="addToCart(${p.id}, '${p.name}', ${p.price}, '${p.image}')" class="mt-auto w-full bg-white text-slate-900 py-4 rounded-2xl font-black hover:bg-amber-500 transition-all transform active:scale-95 flex items-center justify-center gap-3 shadow-xl shadow-black/20">
+                        إضافة للسلة <i class="fas fa-cart-plus"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            updateCartBadge();
+        }
+
+        // 2. وظيفة الإضافة للسلة
+        window.addToCart = (id, name, price, image) => {
+            let cart = JSON.parse(localStorage.getItem('hawai_cart')) || [];
+            
+            // لو الوجبة موجودة أصلاً زود الكمية بس
+            const found = cart.find(item => item.id === id);
+            if(found) {
+                found.quantity += 1;
+            } else {
+                cart.push({ id, name, price, image, quantity: 1 });
+            }
+            
+            localStorage.setItem('hawai_cart', JSON.stringify(cart));
+            updateCartBadge();
+            
+            // تنبيه بسيط
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-10 left-10 bg-green-500 text-white px-8 py-4 rounded-2xl font-black shadow-2xl animate__animated animate__bounceInUp z-[100]";
+            toast.innerHTML = `<i class="fas fa-check-circle ml-2"></i> تم إضافة ${name} للسلة!`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        };
+
+        // 3. تحديث رقم السلة في الناف بار
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('hawai_cart')) || [];
+            const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+            document.getElementById('cart-count').innerText = count;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMenu);
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</body>
+</html>

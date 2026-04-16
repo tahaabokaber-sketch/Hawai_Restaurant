@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دخول | مطعم هواي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="glass w-full max-w-md p-10 rounded-[2.5rem] shadow-2xl text-white">
+        <div class="text-center mb-8">
+            <h1 id="form-title" class="text-3xl font-black italic">دخول <span class="text-amber-500">هواي</span></h1>
+            <p id="form-desc" class="text-gray-400 mt-2 text-sm">أهلاً بك، سجل دخولك للبدء</p>
+        </div>
+
+        <form id="mainForm" class="space-y-5">
+            <div id="name-box" class="hidden animate__animated animate__fadeIn">
+                <label class="text-xs font-bold text-gray-500 mr-2">الاسم الكامل</label>
+                <input type="text" id="user-name" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-amber-500 transition">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-gray-500 mr-2">البريد الإلكتروني</label>
+                <input type="email" id="user-email" required class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-amber-500 transition" placeholder="example@hawai.com">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-gray-500 mr-2">كلمة المرور</label>
+                <input type="password" id="user-pass" required class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-amber-500 transition" placeholder="••••••••">
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-4 rounded-2xl shadow-xl transition transform active:scale-95">
+                دخول <i class="fas fa-sign-in-alt mr-2"></i>
+            </button>
+        </form>
+
+        <div class="mt-8 text-center">
+            <button onclick="toggleMode()" id="toggle-link" class="text-gray-400 text-sm hover:text-amber-500 transition font-bold">
+                ليس لديك حساب؟ <span class="text-amber-500 underline">أنشئ حساباً الآن</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let isLogin = true;
+
+        function toggleMode() {
+            isLogin = !isLogin;
+            document.getElementById('form-title').innerText = isLogin ? "دخول هواي" : "حساب جديد";
+            document.getElementById('name-box').classList.toggle('hidden', isLogin);
+            document.getElementById('submit-btn').innerText = isLogin ? "دخول" : "إنشاء حساب";
+            document.getElementById('toggle-link').innerHTML = isLogin ? 
+                `ليس لديك حساب؟ <span class="text-amber-500 underline">أنشئ حساباً الآن</span>` : 
+                `لديك حساب بالفعل؟ <span class="text-amber-500 underline">سجل دخولك</span>`;
+        }
+
+        document.getElementById('mainForm').onsubmit = (e) => {
+            e.preventDefault();
+            const email = document.getElementById('user-email').value;
+            const name = document.getElementById('user-name').value || 'عميل هواي';
+            
+            // تخزين بيانات الجلسة
+            const userData = { email: email, name: (email === 'admin@hawai.com' ? 'المهندس طه' : name) };
+            localStorage.setItem('hawai_user', JSON.stringify(userData));
+
+            // التوجيه الذكي
+            if (email === 'admin@hawai.com') {
+                alert('مرحباً يا مدير طه، سيتم نقلك للوحة التحكم');
+                window.location.href = 'dashboard.html';
+            } else {
+                alert(`أهلاً بك يا ${userData.name}`);
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
+</body>
+</html>

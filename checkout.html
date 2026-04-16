@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hawai | تأكيد الطلب الفاخر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --amber: #f59e0b; --dark: #020617; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--dark); color: #f8fafc; margin: 0; }
+        
+        /* Glassmorphism Panels */
+        .glass-panel { 
+            background: rgba(15, 23, 42, 0.7); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 2.5rem;
+        }
+
+        /* Inputs Style */
+        .input-field { 
+            width: 100%; 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 1.2rem; 
+            padding: 1.2rem; 
+            color: white; 
+            outline: none; 
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        .input-field:focus { border-color: var(--amber); box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
+
+        /* Tabs for Delivery/Pickup */
+        .tab-btn { 
+            flex: 1; 
+            padding: 1rem; 
+            border-radius: 1rem; 
+            font-weight: 900; 
+            transition: 0.4s; 
+            text-align: center; 
+            cursor: pointer; 
+            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.03);
+        }
+        .tab-active { 
+            background: var(--amber) !important; 
+            color: var(--dark) !important; 
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Confirmation Button */
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--amber), #fbbf24);
+            color: var(--dark);
+            font-weight: 900;
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.25);
+            transition: 0.4s;
+        }
+        .btn-confirm:hover { transform: translateY(-5px); box-shadow: 0 25px 50px rgba(245, 158, 11, 0.4); }
+    </style>
+</head>
+<body onload="initCheckout()">
+
+    <nav class="p-6 flex justify-between items-center border-b border-white/5 sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
+        <h1 class="text-xl font-black italic">تأكيد <span class="text-amber-500">الطلب</span></h1>
+        <button onclick="location.href='index.html'" class="text-gray-400 font-bold flex items-center gap-2">
+            العودة <i class="fas fa-arrow-left"></i>
+        </button>
+    </nav>
+
+    <main class="max-w-2xl mx-auto p-6 space-y-8 pb-32">
+        
+        <div class="glass-panel p-8">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-6 tracking-[0.3em] italic underline decoration-amber-500/30">سلة المشتريات</h3>
+            <div id="cart-summary" class="space-y-4">
+                </div>
+            <div class="mt-8 pt-6 border-t border-white/10 flex justify-between items-center font-black">
+                <span class="text-gray-400">الإجمالي الشامل:</span>
+                <span id="final-total" class="text-3xl text-amber-500 font-luxury italic">0 ج.م</span>
+            </div>
+        </div>
+
+        <div class="glass-panel p-8 space-y-5">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-2 tracking-[0.3em] italic underline decoration-amber-500/30">بيانات التواصل</h3>
+            <input type="text" id="cust-name" class="input-field" placeholder="الاسم بالكامل">
+            <input type="tel" id="cust-phone" class="input-field" placeholder="رقم الموبايل">
+        </div>
+
+        <div class="glass-panel p-8 space-y-6">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-2 tracking-[0.3em] italic underline decoration-amber-500/30">طريقة الاستلام</h3>
+            <div class="flex gap-4">
+                <div id="tab-delivery" class="tab-btn tab-active" onclick="switchType('توصيل')">دليفري (+15 ج)</div>
+                <div id="tab-branch" class="tab-btn" onclick="switchType('فرع')">استلام من الفرع</div>
+            </div>
+            <div id="address-container" class="animate__animated animate__fadeIn">
+                <input type="text" id="cust-address" class="input-field" placeholder="العنوان بالتفصيل (سوهاج - شارع...)">
+            </div>
+        </div>
+
+        <div class="glass-panel p-8 space-y-5">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-2 tracking-[0.3em] italic underline decoration-amber-500/30">خيار الدفع</h3>
+            <select id="pay-method" class="input-field" onchange="togglePayInfo()">
+                <option value="cash">كاش (عند الاستلام)</option>
+                <option value="wallet">محفظة إلكترونية (فودافون كاش)</option>
+            </select>
+            <div id="wallet-info" class="hidden bg-amber-500/5 p-5 rounded-2xl border border-amber-500/20 shadow-inner">
+                <p class="text-[11px] font-black text-amber-500 mb-3 italic">التحويل على الرقم: <span class="underline">01274839375</span></p>
+                <input type="text" id="pay-info" class="input-field !bg-slate-900" placeholder="رقم العملية / وقت التحويل">
+            </div>
+        </div>
+
+        <button onclick="confirmOrder()" class="btn-confirm fixed bottom-8 left-8 right-8 py-6 rounded-[2rem] text-xl flex items-center justify-center gap-3 z-[100]">
+            تأكيد وإرسال الأوردر <i class="fas fa-check-double"></i>
+        </button>
+
+    </main>
+
+    <script>
+        let currentType = 'توصيل';
+        let cartTotal = 0;
+
+        function initCheckout() {
+            const cart = JSON.parse(localStorage.getItem('hawai_cart')) || [];
+            if(cart.length === 0) {
+                alert("السلة فارغة يا هندسة!");
+                location.href = 'index.html';
+                return;
+            }
+
+            const container = document.getElementById('cart-summary');
+            cartTotal = cart.reduce((total, item) => {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center text-md font-black italic">
+                        <span class="text-white">${item.name} <span class="text-amber-500 text-xs ml-2">x${item.quantity}</span></span>
+                        <span class="text-gray-400">${item.price * item.quantity} ج</span>
+                    </div>
+                `;
+                return total + (item.price * item.quantity);
+            }, 0);
+            renderFinalPrice();
+        }
+
+        function switchType(type) {
+            currentType = type;
+            document.getElementById('tab-delivery').classList.toggle('tab-active', type === 'توصيل');
+            document.getElementById('tab-branch').classList.toggle('tab-active', type === 'فرع');
+            document.getElementById('address-container').style.display = type === 'توصيل' ? 'block' : 'none';
+            renderFinalPrice();
+        }
+
+        function renderFinalPrice() {
+            const final = cartTotal + (currentType === 'توصيل' ? 15 : 0);
+            document.getElementById('final-total').innerText = final + " ج.م";
+        }
+
+        function togglePayInfo() {
+            const isWallet = document.getElementById('pay-method').value === 'wallet';
+            document.getElementById('wallet-info').style.display = isWallet ? 'block' : 'none';
+        }
+
+        function confirmOrder() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = currentType === 'توصيل' ? document.getElementById('cust-address').value : 'الاستلام من الفرع';
+            const payInfo = document.getElementById('pay-method').value === 'wallet' ? document.getElementById('pay-info').value : null;
+
+            if(!name || !phone || (currentType === 'توصيل' && !address)) {
+                alert("يرجى مراجعة البيانات الأساسية يا هندسة!");
+                return;
+            }
+
+            try {
+                const cart = JSON.parse(localStorage.getItem('hawai_cart'));
+                const orderData = {
+                    customer: name,
+                    phone: phone,
+                    address: address, // إرسال العنوان للداشبورد تحت ID: address
+                    type: currentType,
+                    paymentInfo: payInfo, // إرسال بيانات المحفظة تحت ID: paymentInfo
+                    items: cart,
+                    total: cartTotal + (currentType === 'توصيل' ? 15 : 0),
+                    date: new Date().toLocaleString('ar-EG')
+                };
+
+                let allOrders = JSON.parse(localStorage.getItem('hawai_orders')) || [];
+                allOrders.push(orderData);
+                localStorage.setItem('hawai_orders', JSON.stringify(allOrders));
+                
+                // مسح السلة وتوجيه المستخدم للرئيسية
+                localStorage.removeItem('hawai_cart');
+                alert("تم استلام طلبك بنجاح! شكراً لاختيارك مطعم هواي.");
+                location.href = 'index.html';
+
+            } catch (err) {
+                console.error(err);
+                alert("عذراً، حدث خطأ فني غير متوقع. جرب مرة تانية.");
+            }
+        }
+    </script>
+</body>
+</html>

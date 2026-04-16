@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سلة هواي | Hawai Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body class="py-8 px-4">
+    <div class="max-w-4xl mx-auto space-y-8">
+        <div class="flex justify-between items-center border-b border-white/10 pb-6">
+            <h1 class="text-3xl font-black text-white italic">سلة <span class="text-amber-500">المشتريات</span></h1>
+            <a href="menu.html" class="bg-white/5 px-6 py-2 rounded-xl text-sm font-bold hover:bg-amber-500 hover:text-slate-900 transition">إضافة وجبات</a>
+        </div>
+
+        <div id="cart-container" class="glass-card rounded-[2.5rem] p-6 md:p-10 shadow-2xl">
+            <div id="cart-items-list" class="space-y-6"></div>
+            <div id="cart-footer" class="mt-12 pt-8 border-t border-white/10 hidden text-center md:text-right">
+                <div class="flex justify-between items-center mb-8">
+                    <span class="text-xl font-bold text-gray-400">إجمالي الحساب:</span>
+                    <span id="grand-total" class="text-4xl font-black text-amber-500">0 ج.م</span>
+                </div>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <button onclick="localStorage.removeItem('hawai_cart'); renderCart();" class="flex-1 bg-red-500/10 text-red-500 py-4 rounded-2xl font-bold hover:bg-red-500 hover:text-white transition">مسح السلة</button>
+                    <a href="checkout.html" class="flex-[2] bg-amber-500 text-slate-900 py-4 rounded-2xl font-black text-xl text-center hover:bg-white transition">تأكيد الطلب واستكمال الدفع</a>
+                </div>
+            </div>
+            <div id="empty-state" class="text-center py-20 hidden">
+                <h2 class="text-2xl font-bold text-gray-400">سلتك فارغة يا هندسة</h2>
+                <a href="menu.html" class="inline-block mt-8 bg-amber-500 text-slate-900 px-10 py-3 rounded-full font-black">تصفح المنيو</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function renderCart() {
+            const cart = JSON.parse(localStorage.getItem('hawai_cart')) || [];
+            const list = document.getElementById('cart-items-list');
+            const footer = document.getElementById('cart-footer');
+            const empty = document.getElementById('empty-state');
+            
+            if (!cart.length) { list.innerHTML = ''; footer.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+
+            empty.classList.add('hidden'); footer.classList.remove('hidden'); list.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += (item.price * item.quantity);
+                list.innerHTML += `
+                    <div class="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-white/5">
+                        <img src="${item.image}" class="w-20 h-20 rounded-2xl object-cover border border-white/10 shadow-lg">
+                        <div class="flex-1 text-center md:text-right">
+                            <h3 class="text-lg font-bold text-white">${item.name}</h3>
+                            <p class="text-amber-500 font-black">${item.price} ج.م</p>
+                        </div>
+                        <div class="flex items-center gap-4 bg-slate-800 p-2 rounded-2xl">
+                            <button onclick="updateQty(${index}, -1)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-red-500 transition text-white">-</button>
+                            <span class="text-xl font-black">${item.quantity}</span>
+                            <button onclick="updateQty(${index}, 1)" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-green-500 transition text-white">+</button>
+                        </div>
+                        <button onclick="removeItem(${index})" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash"></i></button>
+                    </div>`;
+            });
+            document.getElementById('grand-total').innerText = total + ' ج.م';
+        }
+
+        window.updateQty = (i, delta) => {
+            let cart = JSON.parse(localStorage.getItem('hawai_cart'));
+            cart[i].quantity += delta;
+            if (cart[i].quantity <= 0) cart.splice(i, 1);
+            localStorage.setItem('hawai_cart', JSON.stringify(cart));
+            renderCart();
+        };
+
+        window.removeItem = (i) => {
+            let cart = JSON.parse(localStorage.getItem('hawai_cart'));
+            cart.splice(i, 1);
+            localStorage.setItem('hawai_cart', JSON.stringify(cart));
+            renderCart();
+        };
+
+        document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
+</body>
+</html>

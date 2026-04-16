@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hawai | فن المذاق الأصيل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        :root { --amber: #f59e0b; --dark: #020617; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--dark); color: #f8fafc; overflow-x: hidden; }
+        .font-luxury { font-family: 'Playfair Display', serif; }
+
+        /* Fixed Background Engine */
+        .bg-fixed-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1920&q=100');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.35) contrast(1.1);
+        }
+        .vignette-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, var(--dark) 90%);
+            z-index: -1;
+        }
+
+        /* Glass Navigation */
+        .nav-premium { background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-link { position: relative; transition: 0.4s; font-size: 0.85rem; letter-spacing: 1px; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; right: 0; background: var(--amber); transition: 0.3s; }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Gold Button */
+        .btn-gold {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            color: #020617;
+            box-shadow: 0 10px 30px -5px rgba(245, 158, 11, 0.4);
+            transition: all 0.4s;
+        }
+        .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.6); }
+
+        /* Side Menu Style */
+        #mobile-menu {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%);
+            background: rgba(2, 6, 23, 0.98);
+            backdrop-filter: blur(25px);
+            border-left: 1px solid rgba(245, 158, 11, 0.2);
+            width: 75%; height: 100vh; position: fixed; top: 0; right: 0; z-index: 2000;
+        }
+        #mobile-menu.open { transform: translateX(0); }
+        .mobile-link { border-bottom: 1px solid rgba(255,255,255,0.05); width: 90%; padding: 20px 0; font-weight: 700; display: flex; align-items: center; gap: 15px; }
+
+        /* Social Fixed Sidebar */
+        .social-sidebar {
+            position: fixed; left: 25px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 20px; z-index: 100;
+        }
+        .social-sidebar a {
+            width: 48px; height: 48px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+            border-radius: 15px; color: #94a3b8; transition: 0.4s; font-size: 1.3rem;
+        }
+        .social-sidebar a:hover { color: var(--amber); border-color: var(--amber); transform: translateX(5px); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-fixed-layer"></div>
+    <div class="vignette-overlay"></div>
+
+    <div class="social-sidebar hidden lg:flex">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+
+    <nav class="nav-premium fixed top-0 w-full z-[1000] px-6 py-5 md:px-16 flex justify-between items-center text-white">
+        <div class="flex items-center gap-12">
+            <div class="text-2xl md:text-3xl font-black italic tracking-tighter">هواي <span class="text-amber-500 font-black">HAWAI</span></div>
+            <div class="hidden lg:flex gap-10 font-bold uppercase tracking-widest text-gray-400">
+                <a href="menu.html" class="nav-link">المنيو الفاخر</a>
+                <a href="#about" class="nav-link">قصتنا</a>
+                <a href="#contact" class="nav-link">اتصل بنا</a>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <a href="support.html" class="hidden sm:flex items-center gap-2 text-[10px] font-bold text-amber-500 border border-amber-500/20 px-6 py-2.5 rounded-full hover:bg-amber-500 hover:text-dark transition">
+                <i class="fas fa-headset text-xs"></i> الدعم الفني
+            </a>
+            <a href="login.html" class="btn-gold text-[11px] font-black px-7 py-3 rounded-full uppercase tracking-widest">
+                <i class="fas fa-user-circle mr-1 text-sm"></i> تسجيل دخول
+            </a>
+            <button onclick="toggleMenu()" class="lg:hidden text-white p-2 z-[2001] bg-white/5 rounded-xl border border-white/10">
+                <i id="menu-icon" class="fas fa-bars text-2xl transition-all"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div id="mobile-menu" class="lg:hidden">
+        <div class="flex flex-col pt-32 px-10 gap-2">
+            <h4 class="text-gray-600 text-[10px] font-black tracking-[0.3em] uppercase mb-4 italic">تصفح الأقسام</h4>
+            <a href="menu.html" onclick="toggleMenu()" class="mobile-link text-white text-xl"><i class="fas fa-utensils text-amber-500 text-sm"></i> المنيو الفاخر</a>
+            <a href="#about" onclick="toggleMenu()" class="mobile-link text-white text-xl"><i class="fas fa-history text-amber-500 text-sm"></i> قصتنا</a>
+            <a href="#contact" onclick="toggleMenu()" class="mobile-link text-white text-xl"><i class="fas fa-phone text-amber-500 text-sm"></i> اتصل بنا</a>
+            
+            <a href="support.html" onclick="toggleMenu()" class="mobile-link text-amber-500 text-xl font-black mt-4 border-none"><i class="fas fa-headset text-sm"></i> الدعم الفني</a>
+            
+            <div class="flex gap-6 mt-16 justify-center text-gray-500 text-3xl">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div id="menu-backdrop" class="fixed inset-0 bg-black/80 z-[1999] hidden lg:hidden" onclick="toggleMenu()"></div>
+
+    <section class="relative min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
+        <div class="animate__animated animate__fadeInDown">
+            <span class="inline-block px-5 py-1.5 border border-amber-500/30 rounded-full text-[10px] font-black tracking-[0.5em] text-amber-500 mb-8 uppercase bg-amber-500/5">
+                Modern Dining - Hawai 2026
+            </span>
+            <h1 class="text-5xl md:text-[8.5rem] font-black leading-none italic mb-6 tracking-tighter">
+                فن <span class="text-amber-500 font-luxury not-italic">المذاق</span> الأصيل
+            </h1>
+            <p class="text-gray-300 text-lg md:text-2xl font-light max-w-3xl mx-auto mb-14 leading-relaxed italic">
+                نحن لا نصنع الطعام، نحن ننسج مشاعر السعادة من مكونات طازجة لتناسب ذائقتك الرفيعة في قلب سوهاج.
+            </p>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 animate__animated animate__fadeInUp">
+            <a href="menu.html" class="btn-gold px-16 py-6 rounded-full font-black text-xl flex items-center gap-4 shadow-2xl">
+                اكتشف القائمة <i class="fas fa-arrow-left"></i>
+            </a>
+            <a href="#contact" class="px-16 py-6 rounded-full font-black text-xl border border-white/10 bg-white/5 hover:bg-white hover:text-dark transition backdrop-blur-md">
+                موقعنا <i class="fas fa-map-marked-alt mr-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <section id="about" class="py-32 px-6 md:px-24 bg-slate-950/90 relative z-10 border-y border-white/5">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <div class="space-y-10">
+                <h2 class="text-5xl md:text-7xl font-black italic">لماذا <span class="text-amber-500 text-glow">هواي؟</span></h2>
+                <p class="text-gray-400 text-xl font-bold leading-loose italic">مطعم هواي يجمع بين سرعة الخدمة وفخامة المذاق. نستخدم أجود أنواع اللحوم البلدية والخضروات الطازجة المحضرة يومياً لتصلك ساخنة وبأعلى جودة.</p>
+            </div>
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800" class="rounded-[3.5rem] shadow-2xl border border-white/10 grayscale hover:grayscale-0 transition duration-1000 object-cover h-[500px]">
+        </div>
+    </section>
+
+    <footer class="py-20 border-t border-white/5 text-center bg-slate-950 relative z-10">
+        <div class="mb-10 text-3xl font-black italic opacity-20 text-white tracking-[0.5em] uppercase">HAWAI</div>
+        <p class="text-gray-600 font-bold text-[10px] uppercase tracking-[0.4em]">Designed & Developed by <span class="text-amber-500">Abokabare.code</span> | Engineer Taha</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const backdrop = document.getElementById('menu-backdrop');
+            const icon = document.getElementById('menu-icon');
+            
+            if (menu.classList.contains('open')) {
+                menu.classList.remove('open');
+                backdrop.classList.add('hidden');
+                icon.className = 'fas fa-bars text-2xl transition-all';
+            } else {
+                menu.classList.add('open');
+                backdrop.classList.remove('hidden');
+                icon.className = 'fas fa-times text-2xl transition-all text-amber-500';
+            }
+        }
+    </script>
+</body>
+</html>
